@@ -15,20 +15,18 @@ for file in os.listdir(path):
         dataset = rasterio.open(jp2_file)
 
 #rp.show(dataset)
-dataset.meta
-dataset.bounds
+print(dataset.meta)
+print(dataset.bounds)
 
+                                        # Convert the CRS
 # standard WGS84 coordinates
 new_crs = CRS.from_epsg(4326)
-
 # Figuring out the top left coordinates in WGS84 system
 topleft_coo = transform(dataset.crs, new_crs,
                     xs=[dataset.bounds[0]], ys=[dataset.bounds[3]])
-
 # Figuring out the bottom right coordinates in WGS84 system
 bottomright_coo = transform(dataset.crs, new_crs,
                     xs=[dataset.bounds[2]], ys=[dataset.bounds[1]])
-
 print("Top-left coordinates (long, lat):", topleft_coo)
 print("Bottom-right coordinates (long, lat):", bottomright_coo)
 
