@@ -18,7 +18,7 @@ for file in os.listdir(path):
 print(dataset.meta)
 print(dataset.bounds)
 
-                                        # Convert the CRS
+# Convert the CRS
 # standard WGS84 coordinates
 new_crs = CRS.from_epsg(4326)
 # Figuring out the top left coordinates in WGS84 system

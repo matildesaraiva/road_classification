@@ -32,6 +32,11 @@ south = bottomright_coo[1][0]  # southern latitude
 east = bottomright_coo[0][0]  # eastern longitude
 west = topleft_coo[0][0]  # western longitude
 
+#print(north)
+#print(south)
+#print(east)
+#print(west)
+
 # Download the OSM data and create a graph
 graph = ox.graph.graph_from_bbox(north, south, east, west, network_type='all')
 
