@@ -11,9 +11,14 @@ import osmnx as ox
 import networkx as nx
 
 # Import the raster data with rasterio
-raster = rasterio.open('piece_0_6.tif')
-print(raster)
-#show(raster)
+path = 'C:/data/train'
+for file in os.listdir(path):
+    if file.endswith('.tif'):
+        tif_file = os.path.join(path, file)
+        print(tif_file)
+        dataset = rasterio.open(tif_file)
+
+show(raster)
 print(raster.meta)
 print(raster.bounds)
 
@@ -59,7 +64,7 @@ y_pixel_size = ((ymax - ymin) / height)
 transform = from_origin(xmin, ymax, x_pixel_size, y_pixel_size)
 
 # Create a new raster dataset
-vector_raster_path = 'C:/data/vector_raster.tif' # vector_raster file path
+vector_raster_path = 'C:/data/vector_raster.tif'
 new_dataset = rasterio.open(
     vector_raster_path,
     'r+',
@@ -71,9 +76,9 @@ new_dataset = rasterio.open(
     crs=gdf.crs,
     transform=transform)
 
-mask = geometry_mask(gdf.geometry, out_shape=(height, width), transform=transform, invert=True)
+#mask = geometry_mask(gdf.geometry, out_shape=(height, width), transform=transform, invert=True)
 # Write the mask to the raster dataset
-new_dataset.write(mask, 1)
+#new_dataset.write(mask, 1)
 
 # Open vec as a numpy array
 image = new_dataset.read()
@@ -103,6 +108,7 @@ with rasterio.open(
     # Write the modified_image array to the raster dataset
     dst.write(modified_image)
 
+# This part is going to be deleted, it only has the purpose of making it easier to access if both images match
 background = cv2.imread('piece_0_6.tif')
 overlay = cv2.imread('C:/data/vector.tif')
 # Set the alpha value of white pixels in the overlay image to zero

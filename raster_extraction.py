@@ -7,7 +7,7 @@ from rasterio.warp import transform
 from rasterio.windows import Window
 from rasterio.transform import Affine
 
-path = 'C:/data'
+path = 'C:/data/original'
 for file in os.listdir(path):
     if file.endswith('.jp2'):
         jp2_file = os.path.join(path, file)
@@ -58,7 +58,7 @@ for i in range(30):
         subset = dataset.read(window=window)
 
         # Create a new TIFF file for each piece
-        piece_path = f"piece_{i}_{j}.tif"
+        piece_path = f"C:/data/train/raster_{i}_{j}.tif"
         with rasterio.open(
                 piece_path,
                 'w',
