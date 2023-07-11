@@ -58,7 +58,7 @@ for i in range(30):
         subset = dataset.read(window=window)
 
         # Create a new TIFF file for each piece
-        piece_path = f"C:/data/train/raster_{i}_{j}.tif"
+        piece_path = f"C:/data/pieces/raster_{i}_{j}.tif"
         with rasterio.open(
                 piece_path,
                 'w',
