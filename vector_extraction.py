@@ -8,6 +8,7 @@ import osmnx as ox
 import networkx as nx
 from rasterio.transform import from_origin
 
+
 # Import the raster data with rasterio
 path = 'C:/data/raster_data/'
 for file in os.listdir(path):
