@@ -1,16 +1,7 @@
 # Some imports
 import os
-import rasterio
-from rasterio.crs import CRS
-import rasterio.plot as rp
-from rasterio.warp import transform
-from rasterio.windows import Window
-from rasterio.transform import Affine
-import numpy as np
 from rasterio.crs import CRS
 from rasterio.warp import transform
-from rasterio.plot import show
-import cv2
 import rasterio
 from rasterio.features import geometry_mask
 from rasterio.transform import from_origin

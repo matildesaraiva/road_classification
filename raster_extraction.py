@@ -2,7 +2,6 @@
 import os
 import rasterio
 from rasterio.crs import CRS
-import rasterio.plot as rp
 from rasterio.warp import transform
 from rasterio.windows import Window
 from rasterio.transform import Affine
