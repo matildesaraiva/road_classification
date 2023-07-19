@@ -1,62 +1,86 @@
-# Some imports
 import os
+import rasterio
 from rasterio.crs import CRS
 from rasterio.warp import transform
-import rasterio
-from rasterio.features import geometry_mask
-from rasterio.transform import from_origin
-import osmnx as ox
-import networkx as nx
-tif_file = "C:/data/raster_data/raster_0_0_12.tif"
-raster = rasterio.open(tif_file)
+from rasterio.windows import Window
+from rasterio.transform import Affine
+import numpy as np
 
-new_crs = CRS.from_epsg(4326)
-# Figuring out the top left coordinates in WGS84 system
-topleft_coo = transform(raster.crs, new_crs, xs=[raster.bounds[0]], ys=[raster.bounds[3]])
-# Figuring out the bottom right coordinates in WGS84 system
-bottomright_coo = transform(raster.crs, new_crs, xs=[raster.bounds[2]], ys=[raster.bounds[1]])
-print("Top-left coordinates (long, lat):", topleft_coo)
-print("Bottom-right coordinates (long, lat):", bottomright_coo)
+def raster_extraction(index, jp2_file):
+    print(f'{index} - {jp2_file}')
+    dataset = rasterio.open(jp2_file)
 
-north = topleft_coo[1][0]  # northern latitude
-south = bottomright_coo[1][0]  # southern latitude
-east = bottomright_coo[0][0]  # eastern longitude
-west = topleft_coo[0][0]  # western longitude
-# Download the OSM data and create a GeoDataFrame
-graph = ox.graph.graph_from_bbox(north, south, east, west, network_type='all')  # retain_all=True
-# Get the connected components
-components = nx.strongly_connected_components(graph)
-for i, component in enumerate(components):
-    subgraph = graph.subgraph(component)
-    geodf = ox.utils_graph.graph_to_gdfs(subgraph, nodes=True, edges=True, node_geometry=True, fill_edge_geometry=True)
-gdf = geodf[1]
-print(gdf)
-# Specify the output raster file path
+    # Convert the CRS
+    # standard WGS84 coordinates
+    new_crs = CRS.from_epsg(4326)
+    # Figuring out the top left coordinates in WGS84 system
+    topleft_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[0]], ys=[dataset.bounds[3]])
+    # Figuring out the bottom right coordinates in WGS84 system
+    bottomright_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[2]], ys=[dataset.bounds[1]])
 
-file_name = tif_file.split("raster")[-1]
-output_path = f"C:/data/vector_data/vector{file_name}"
+    # Read the image data
+    image = dataset.read()
+    # Get the dimensions of the image
+    height, width = image.shape[1:]
+    # Get the geospatial information
+    transform_dataset = dataset.transform
+    crs = dataset.crs
+    # Create a list to store the coordinates and saved file paths
+    piece_info = []
 
-# Define the desired raster resolution and extent
-xmin, ymin, xmax, ymax = west, south, east, north
-width = int(raster.meta["width"])
-height = int(raster.meta["height"])
-x_pixel_size = ((xmax - xmin) / width)
-y_pixel_size = ((ymax - ymin) / height)
-transform = from_origin(xmin, ymax, x_pixel_size, y_pixel_size)
-# Create a new raster dataset
-new_dataset = rasterio.open(
-    output_path,
-    'w',
-    driver='GTiff',
-    height=height,
-    width=width,
-    count=1,
-    dtype='uint8',
-    crs=gdf.crs,
-    transform=transform
-)
-# Convert the GeoDataFrame to a mask
-mask = geometry_mask(gdf.geometry, out_shape=(height, width), transform=transform, invert=True)
-# Write the mask to the raster dataset
-new_dataset.write(mask, 1)
-new_dataset.close()
+    # Split the image into 3x3 grid
+    for i in range(30):
+        for j in range(30):
+            # Calculate the window bounds for each piece
+            start_h = i * height // 30
+            end_h = (i + 1) * height // 30
+            start_w = j * width // 30
+            end_w = (j + 1) * width // 30
+
+            # Read the subset of the image using window
+            window = rasterio.windows.Window(start_w, start_h, end_w - start_w, end_h - start_h)
+            subset = dataset.read(window=window)
+            # count black pixels
+            black_pixels = subset.size - np.count_nonzero(subset)
+
+            if black_pixels > 10:
+                # Skip saving the image if it has more than 10 completely black pixels
+                continue
+
+            # Create a new TIFF file for each piece
+            piece_path = f"C:/data/raster_data/raster_{index}_{i}_{j}.tif"
+            with rasterio.open(
+                piece_path,
+                'w',
+                driver='GTiff',
+                height=subset.shape[1],
+                width=subset.shape[2],
+                count=subset.shape[0],
+                dtype=subset.dtype,
+                crs=crs,
+                transform=transform_dataset * Affine.translation(start_w, start_h)
+            ) as dst:
+                # Write the subset to the TIFF file
+                dst.write(subset)
+
+            # Calculate the geographical coordinates of the piece
+            piece_coords = transform_dataset * (start_w, start_h)
+            piece_info.append((piece_coords, piece_path))
+
+    # Print the piece coordinates and file paths
+    for info in piece_info:
+        print(f"Coordinates: {info[0]}")
+        print(f"File path: {info[1]}")
+
+if __name__ == '__main__':
+    raster_files = []
+    path = 'C:/data/original_raster'
+    for file in os.listdir(path):
+        if file.endswith('.jp2'):
+            jp2_file = os.path.join(path, file)
+            raster_files.append(jp2_file)
+
+    for index, jp2_file in enumerate(raster_files):
+        raster_extraction(index, jp2_file)
+
+    print('Finished successfully')

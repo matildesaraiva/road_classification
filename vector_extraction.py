@@ -78,4 +78,6 @@ for file in os.listdir(path):
             new_dataset.write(mask, 1)
             new_dataset.close()
 
+print('Finished successfully')
+
 

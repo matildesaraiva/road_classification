@@ -4,10 +4,10 @@ from rasterio.crs import CRS
 from rasterio.warp import transform
 import rasterio
 from rasterio.features import geometry_mask
-from rasterio.transform import from_origin
 import osmnx as ox
 import networkx as nx
 from rasterio.transform import from_origin
+
 
 # Import the raster data with rasterio
 path = 'C:/data/raster_data/'
