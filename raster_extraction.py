@@ -29,13 +29,13 @@ def raster_extraction(index, jp2_file):
     piece_info = []
 
     # Split the image into 3x3 grid
-    for i in range(46):
-        for j in range(46):
+    for i in range(43):
+        for j in range(43):
             # Calculate the window bounds for each piece
-            start_h = int(i * height / 45.75)
-            end_h = int((i + 1) * height / 45.75)
-            start_w = int(j * width / 45.75)
-            end_w = int((j + 1) * width / 45.75)
+            start_h = int(i * height / 42.890625)
+            end_h = int((i + 1) * height / 42.890625)
+            start_w = int(j * width / 42.890625)
+            end_w = int((j + 1) * width / 42.890625)
 
             # Read the subset of the image using window
             window = rasterio.windows.Window(start_w, start_h, end_w - start_w, end_h - start_h)
@@ -46,7 +46,8 @@ def raster_extraction(index, jp2_file):
                 # Skip saving the image if it has more than 10 completely black pixels
                 continue
             # Create a new TIFF file for each piece
-            piece_path = f"C:/data/raster_data/raster_{index}_{i}_{j}.tif"
+            identifier = os.path.basename(jp2_file).split(".jp2")[0]
+            piece_path = f"C:/data/raster_data/{identifier}_{i}_{j}.tif"
             with rasterio.open(
                 piece_path,
                 'w',

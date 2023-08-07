@@ -13,7 +13,7 @@ overlay[non_black_pixels] = [0, 0, 255]
 # Merge the background and modified overlay images
 combined_image = cv2.addWeighted(background, 1, overlay, 1, 0)
 # Save the combined image
-cv2.imwrite('C:/data/combined.tif', combined_image)
+cv2.imwrite('C:/data/nameofthefile, combined_image)
 
 
 ##########################################################################################
