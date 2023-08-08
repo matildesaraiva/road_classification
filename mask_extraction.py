@@ -48,7 +48,8 @@ for file in os.listdir(path):
                     print("ValueError occurred for:", tif_file)
                 break
             gdf = geodf[1]
-            output_path = f"C:/data/mask_data/{tif_file}"
+            file_name = tif_file.split("/")[-1]
+            output_path = f"C:/data/mask_data/{file_name}"
             # Define the desired raster resolution and extent
             xmin, ymin, xmax, ymax = west, south, east, north
             width = int(raster.meta["width"])
