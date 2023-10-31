@@ -8,10 +8,8 @@ import osmnx as ox
 import networkx as nx
 from rasterio.transform import from_origin
 
-
 # Import the raster data with rasterio
-# Import the raster data with rasterio
-path = 'C:/data/raster_data/'
+path = 'C:/Users/LENOVO/Desktop/thesis/pieces/'
 for file in os.listdir(path):
     if file.endswith('.tif'):
         tif_file = os.path.join(path, file)
@@ -49,7 +47,7 @@ for file in os.listdir(path):
                 break
             gdf = geodf[1]
             file_name = tif_file.split("/")[-1]
-            output_path = f"C:/data/mask_data/{file_name}"
+            output_path = f"C:/Users/LENOVO/Desktop/thesis/piecesmask/{file_name}"
             # Define the desired raster resolution and extent
             xmin, ymin, xmax, ymax = west, south, east, north
             width = int(raster.meta["width"])
@@ -72,4 +70,3 @@ for file in os.listdir(path):
             new_dataset.write(mask, 1)
             new_dataset.close()
 print('Finished successfully')
-

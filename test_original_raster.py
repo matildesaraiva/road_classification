@@ -1,14 +1,16 @@
-import os
-import rasterio
 from rasterio.crs import CRS
 from rasterio.warp import transform
 from rasterio.windows import Window
+import os
+import rasterio
 from rasterio.transform import Affine
-import numpy as np
+from pyproj import CRS, Transformer
 
-def raster_extraction(index, jp2_file):
-    print(f'{index} - {jp2_file}')
-    dataset = rasterio.open(jp2_file)
+# Second cut: Split each image in 32x32 pixel pieces
+
+def raster_extraction(index, tif_file):
+    print(f'{index} - {tif_file}')
+    dataset = rasterio.open(tif_file)
 
     # Convert the CRS
     # standard WGS84 coordinates
@@ -29,25 +31,21 @@ def raster_extraction(index, jp2_file):
     piece_info = []
 
     # Split the image into 3x3 grid
-    for i in range(43):
-        for j in range(43):
+    for i in range(2):
+        for j in range(2):
             # Calculate the window bounds for each piece
-            start_h = int(i * height / 42.890625)
-            end_h = int((i + 1) * height / 42.890625)
-            start_w = int(j * width / 42.890625)
-            end_w = int((j + 1) * width / 42.890625)
+            start_h = int(i * height / 2)
+            end_h = int((i + 1) * height / 2)
+            start_w = int(j * width / 2)
+            end_w = int((j + 1) * width / 2)
 
             # Read the subset of the image using window
             window = rasterio.windows.Window(start_w, start_h, end_w - start_w, end_h - start_h)
             subset = dataset.read(window=window)
-            # count black pixels
-            black_pixels = subset.size - np.count_nonzero(subset)
-            if black_pixels > 10:
-                # Skip saving the image if it has more than 10 completely black pixels
-                continue
+
             # Create a new TIFF file for each piece
-            identifier = os.path.basename(jp2_file).split(".jp2")[0]
-            piece_path = f"C:/data/raster_data/{identifier}_{i}_{j}.tif"
+            identifier = os.path.basename(tif_file).split(".tif")[0]
+            piece_path = f"C:/Users/LENOVO/Desktop/thesis/pieces/{identifier}_{i}_{j}.tif"
             with rasterio.open(
                 piece_path,
                 'w',
@@ -73,13 +71,13 @@ def raster_extraction(index, jp2_file):
 
 if __name__ == '__main__':
     raster_files = []
-    path = 'C:/data/original_raster'
+    path = 'C:/Users/LENOVO/Desktop/thesis/original_raster/'
     for file in os.listdir(path):
-        if file.endswith('.jp2'):
-            jp2_file = os.path.join(path, file)
-            raster_files.append(jp2_file)
+        if file.endswith('.tif'):
+            tif_file = os.path.join(path, file)
+            raster_files.append(tif_file)
 
-    for index, jp2_file in enumerate(raster_files):
-        raster_extraction(index, jp2_file)
+    for index, tif_file in enumerate(raster_files):
+        raster_extraction(index, tif_file)
 
     print('Finished successfully')
