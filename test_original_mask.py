@@ -9,7 +9,7 @@ import networkx as nx
 from rasterio.transform import from_origin
 
 # Import the raster data with rasterio
-path = 'C:/Users/LENOVO/Desktop/thesis/pieces/'
+path = 'C:/Users/LENOVO/Desktop/thesis/mask_test/'
 for file in os.listdir(path):
     if file.endswith('.tif'):
         tif_file = os.path.join(path, file)
@@ -46,8 +46,9 @@ for file in os.listdir(path):
                     print("ValueError occurred for:", tif_file)
                 break
             gdf = geodf[1]
+
             file_name = tif_file.split("/")[-1]
-            output_path = f"C:/Users/LENOVO/Desktop/thesis/piecesmask/{file_name}"
+            output_path = f"C:/Users/LENOVO/Desktop/thesis/lilp/{file_name}"
             # Define the desired raster resolution and extent
             xmin, ymin, xmax, ymax = west, south, east, north
             width = int(raster.meta["width"])

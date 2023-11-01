@@ -31,13 +31,13 @@ def raster_extraction(index, tif_file):
     piece_info = []
 
     # Split the image into 3x3 grid
-    for i in range(2):
-        for j in range(2):
+    for i in range(4):
+        for j in range(4):
             # Calculate the window bounds for each piece
-            start_h = int(i * height / 2)
-            end_h = int((i + 1) * height / 2)
-            start_w = int(j * width / 2)
-            end_w = int((j + 1) * width / 2)
+            start_h = int(i * height / 4)
+            end_h = int((i + 1) * height / 4)
+            start_w = int(j * width / 4)
+            end_w = int((j + 1) * width / 4)
 
             # Read the subset of the image using window
             window = rasterio.windows.Window(start_w, start_h, end_w - start_w, end_h - start_h)
@@ -45,7 +45,7 @@ def raster_extraction(index, tif_file):
 
             # Create a new TIFF file for each piece
             identifier = os.path.basename(tif_file).split(".tif")[0]
-            piece_path = f"C:/Users/LENOVO/Desktop/thesis/pieces/{identifier}_{i}_{j}.tif"
+            piece_path = f"C:/Users/LENOVO/Desktop/thesis/mask_test/{identifier}_{i}_{j}.tif"
             with rasterio.open(
                 piece_path,
                 'w',
@@ -71,7 +71,7 @@ def raster_extraction(index, tif_file):
 
 if __name__ == '__main__':
     raster_files = []
-    path = 'C:/Users/LENOVO/Desktop/thesis/original_raster/'
+    path = 'C:/Users/LENOVO/Desktop/thesis/raster_test/'
     for file in os.listdir(path):
         if file.endswith('.tif'):
             tif_file = os.path.join(path, file)
