@@ -1,3 +1,7 @@
+# Description of the notebook:
+# Raster's second cut: Split each image into 32x32 pixel pieces
+
+
 from rasterio.crs import CRS
 from rasterio.warp import transform
 from rasterio.windows import Window
@@ -5,8 +9,6 @@ import os
 import rasterio
 from rasterio.transform import Affine
 from pyproj import CRS, Transformer
-
-# Second cut: Split each image in 32x32 pixel pieces
 
 def raster_extraction(index, tif_file):
     print(f'{index} - {tif_file}')
@@ -45,7 +47,7 @@ def raster_extraction(index, tif_file):
 
             # Create a new TIFF file for each piece
             identifier = os.path.basename(tif_file).split(".tif")[0]
-            piece_path = f"C:/Users/LENOVO/Desktop/thesis/piece_raster/{identifier}_{i}_{j}.tif"
+            piece_path = f"C:/Users/LENOVO/Desktop/thesis/raster_pieces/{identifier}_{i}_{j}.tif"
             with rasterio.open(
                 piece_path,
                 'w',
@@ -71,7 +73,7 @@ def raster_extraction(index, tif_file):
 
 if __name__ == '__main__':
     raster_files = []
-    path = 'C:/Users/LENOVO/Desktop/thesis/original_raster/'
+    path = 'C:/Users/LENOVO/Desktop/thesis/raster/'
     for file in os.listdir(path):
         if file.endswith('.tif'):
             tif_file = os.path.join(path, file)

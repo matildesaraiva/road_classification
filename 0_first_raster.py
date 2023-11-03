@@ -1,10 +1,11 @@
+# Description of the notebook:
+# Raster's first cut: The goal of this notebook is to cut the images into a multiple number of 32, establishing a 5952x3072 pixels shape, starting in (0,0)
+
 from rasterio.crs import CRS
 import os
 import rasterio
 from rasterio.transform import Affine
 from pyproj import CRS, Transformer
-
-# First cut: keep only the first 5952x3072 pixels starting in (0,0)
 
 def raster_extraction(index, tif_file):
     print(f'{index} - {tif_file}')
@@ -33,7 +34,7 @@ def raster_extraction(index, tif_file):
     )
 
     # Create a new directory to save the modified images
-    output_dir = 'C:/Users/LENOVO/Desktop/thesis/original_raster/'
+    output_dir = 'C:/Users/LENOVO/Desktop/thesis/raster/'
     os.makedirs(output_dir, exist_ok=True)
     print(f"Output Directory: {output_dir}")  # Debugging statement
 
@@ -59,7 +60,7 @@ def raster_extraction(index, tif_file):
 if __name__ == '__main__':
     piece_info = []  # Initialize piece_info list
     raster_files = []
-    path = 'C:/Users/LENOVO/Desktop/thesis/data/'
+    path = 'C:/Users/LENOVO/Desktop/thesis/original_raster/'
     for file in os.listdir(path):
         if file.endswith('.tif'):
             tif_file = os.path.join(path, file)
