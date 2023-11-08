@@ -60,7 +60,7 @@ def raster_extraction(index, tif_file):
 if __name__ == '__main__':
     piece_info = []  # Initialize piece_info list
     raster_files = []
-    path = 'C:/Users/LENOVO/Desktop/thesis/original_raster/'
+    path = 'C:/Users/LENOVO/Desktop/thesis/images/'
     for file in os.listdir(path):
         if file.endswith('.tif'):
             tif_file = os.path.join(path, file)

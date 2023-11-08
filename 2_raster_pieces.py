@@ -1,7 +1,6 @@
 # Description of the notebook:
 # Raster's second cut: Split each image into 32x32 pixel pieces
 
-
 from rasterio.crs import CRS
 from rasterio.warp import transform
 from rasterio.windows import Window
@@ -13,14 +12,13 @@ from pyproj import CRS, Transformer
 def raster_extraction(index, tif_file):
     print(f'{index} - {tif_file}')
     dataset = rasterio.open(tif_file)
-
     # Convert the CRS
     # standard WGS84 coordinates
     new_crs = CRS.from_epsg(4326)
     # Figuring out the top left coordinates in WGS84 system
-    topleft_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[0]], ys=[dataset.bounds[3]])
+    topleft_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[0]], ys=[dataset.bounds[3])
     # Figuring out the bottom right coordinates in WGS84 system
-    bottomright_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[2]], ys=[dataset.bounds[1]])
+    bottomright_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[2]], ys=[dataset.bounds[1])
 
     # Read the image data
     image = dataset.read()
@@ -47,7 +45,8 @@ def raster_extraction(index, tif_file):
 
             # Create a new TIFF file for each piece
             identifier = os.path.basename(tif_file).split(".tif")[0]
-            piece_path = f"C:/Users/LENOVO/Desktop/thesis/raster_pieces/{identifier}_{i}_{j}.tif"
+            piece_name = f"{identifier}_{i}_{j}.tif"
+            piece_path = f"C:/Users/LENOVO/Desktop/thesis/raster_pieces/{piece_name}"
             with rasterio.open(
                 piece_path,
                 'w',
@@ -61,6 +60,32 @@ def raster_extraction(index, tif_file):
             ) as dst:
                 # Write the subset to the TIFF file
                 dst.write(subset)
+
+            # Check if the piece name exists in the "no_road" or "road" folders
+            no_road_folder = f'C:/Users/LENOVO/Desktop/thesis/vector_pieces/no_road/{piece_name}'
+            road_folder = f'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road/{piece_name}'
+
+            if os.path.exists(no_road_folder):
+                output_path = f'C:/Users/LENOVO/Desktop/thesis/raster_pieces/no_road/{piece_name}'
+            elif os.path.exists(road_folder):
+                output_path = f'C:/Users/LENOVO/Desktop/thesis/raster_pieces/road/{piece_name}'
+            else:
+                # Handle the case when the piece doesn't exist in the "vector_pieces" folders
+                output_path = None
+
+            if output_path:
+                with rasterio.open(
+                    output_path,
+                    'w',
+                    driver='GTiff',
+                    height=subset.shape[1],
+                    width=subset.shape[2],
+                    count=subset.shape[0],
+                    dtype=subset.dtype,
+                    crs=crs,
+                    transform=transform_dataset * Affine.translation(start_w, start_h)
+                ) as dst:
+                    dst.write(subset)
 
             # Calculate the geographical coordinates of the piece
             piece_coords = transform_dataset * (start_w, start_h)

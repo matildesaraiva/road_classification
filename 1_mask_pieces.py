@@ -1,13 +1,18 @@
+# Description of the notebook:
+# Vector's cut: Split each image into 32x32 pixel pieces
+
 from rasterio.windows import Window
 import os
 import rasterio
 import numpy as np
 
-# Import the raster data with rasterio
-path = 'C:/Users/LENOVO/Desktop/thesis/vector/'
-for file in os.listdir(path):
+input_path = 'C:/Users/LENOVO/Desktop/thesis/vector/'
+output_path_zero = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/no_road/'
+output_path_nonzero = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road/'
+
+for file in os.listdir(input_path):
     if file.endswith('.png'):
-        png_file = os.path.join(path, file)
+        png_file = os.path.join(input_path, file)
         print(png_file)
         dataset = rasterio.open(png_file)
         # Read the image data
@@ -27,8 +32,12 @@ for file in os.listdir(path):
                 subset = dataset.read(window=window)
 
                 # Check if all values in the subset are equal to 0
-                if not np.all(subset == 0):
+                if np.all(subset == 0):
                     identifier = os.path.basename(file).split(".png")[0]
-                    output_path = f'C:/Users/LENOVO/Desktop/thesis/vector_pieces/{identifier}_{i}_{j}.tif'
-                    with rasterio.open(output_path, 'w', driver='GTiff', width=subset.shape[2], height=subset.shape[1], count=1, dtype=subset.dtype) as dst:
-                        dst.write(subset)
+                    output_path = os.path.join(output_path_zero, f'{identifier}_{i}_{j}.tif')
+                else:
+                    identifier = os.path.basename(file).split(".png")[0]
+                    output_path = os.path.join(output_path_nonzero, f'{identifier}_{i}_{j}.tif')
+
+                with rasterio.open(output_path, 'w', driver='GTiff', width=subset.shape[2], height=subset.shape[1], count=1, dtype=subset.dtype) as dst:
+                    dst.write(subset)
