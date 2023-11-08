@@ -25,7 +25,7 @@ def raster_extraction(index, tif_file):
     image = dataset.read()
 
     # Define the desired dimensions
-    target_width, target_height = 5952, 3072
+    target_width, target_height = 5952, 3040
 
     # Define the transform for the new dataset
     transform_dataset = Affine.translation(topleft_coo[0], topleft_coo[1]) * Affine.scale(

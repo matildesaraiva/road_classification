@@ -1,13 +1,15 @@
 # Description of the notebook:
 # Raster's second cut: Split each image into 32x32 pixel pieces
 
+# Description of the notebook: Raster's second cut: Split each image into 32x32 pixel pieces
+
 from rasterio.crs import CRS
 from rasterio.warp import transform
 from rasterio.windows import Window
 import os
 import rasterio
 from rasterio.transform import Affine
-from pyproj import CRS, Transformer
+from pyproj import CRS
 
 def raster_extraction(index, tif_file):
     print(f'{index} - {tif_file}')
@@ -16,9 +18,9 @@ def raster_extraction(index, tif_file):
     # standard WGS84 coordinates
     new_crs = CRS.from_epsg(4326)
     # Figuring out the top left coordinates in WGS84 system
-    topleft_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[0]], ys=[dataset.bounds[3])
+    topleft_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[0]], ys=[dataset.bounds[3]])
     # Figuring out the bottom right coordinates in WGS84 system
-    bottomright_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[2]], ys=[dataset.bounds[1])
+    bottomright_coo = transform(dataset.crs, new_crs, xs=[dataset.bounds[2]], ys=[dataset.bounds[1]])
 
     # Read the image data
     image = dataset.read()
@@ -31,11 +33,11 @@ def raster_extraction(index, tif_file):
     piece_info = []
 
     # Split the image into 3x3 grid
-    for i in range(96):
+    for i in range(95):
         for j in range(186):
             # Calculate the window bounds for each piece
-            start_h = int(i * height / 96)
-            end_h = int((i + 1) * height / 96)
+            start_h = int(i * height / 95)
+            end_h = int((i + 1) * height / 95)
             start_w = int(j * width / 186)
             end_w = int((j + 1) * width / 186)
 
@@ -46,31 +48,18 @@ def raster_extraction(index, tif_file):
             # Create a new TIFF file for each piece
             identifier = os.path.basename(tif_file).split(".tif")[0]
             piece_name = f"{identifier}_{i}_{j}.tif"
-            piece_path = f"C:/Users/LENOVO/Desktop/thesis/raster_pieces/{piece_name}"
-            with rasterio.open(
-                piece_path,
-                'w',
-                driver='GTiff',
-                height=subset.shape[1],
-                width=subset.shape[2],
-                count=subset.shape[0],
-                dtype=subset.dtype,
-                crs=crs,
-                transform=transform_dataset * Affine.translation(start_w, start_h)
-            ) as dst:
-                # Write the subset to the TIFF file
-                dst.write(subset)
 
-            # Check if the piece name exists in the "no_road" or "road" folders
-            no_road_folder = f'C:/Users/LENOVO/Desktop/thesis/vector_pieces/no_road/{piece_name}'
-            road_folder = f'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road/{piece_name}'
+            no_road_folder = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/no_road/'
+            road_center_folder = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road_center/'
+            road_other_folder = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road_other/'
 
-            if os.path.exists(no_road_folder):
+            if os.path.exists(os.path.join(no_road_folder, piece_name)):
                 output_path = f'C:/Users/LENOVO/Desktop/thesis/raster_pieces/no_road/{piece_name}'
-            elif os.path.exists(road_folder):
-                output_path = f'C:/Users/LENOVO/Desktop/thesis/raster_pieces/road/{piece_name}'
+            elif os.path.exists(os.path.join(road_center_folder, piece_name)):
+                output_path = f'C:/Users/LENOVO/Desktop/thesis/raster_pieces/road_center/{piece_name}'
+            elif os.path.exists(os.path.join(road_other_folder, piece_name)):
+                output_path = f'C:/Users/LENOVO/Desktop/thesis/raster_pieces/road_other/{piece_name}'
             else:
-                # Handle the case when the piece doesn't exist in the "vector_pieces" folders
                 output_path = None
 
             if output_path:
@@ -85,18 +74,19 @@ def raster_extraction(index, tif_file):
                     crs=crs,
                     transform=transform_dataset * Affine.translation(start_w, start_h)
                 ) as dst:
+                    # Write the subset to the TIFF file
                     dst.write(subset)
 
             # Calculate the geographical coordinates of the piece
             piece_coords = transform_dataset * (start_w, start_h)
-            piece_info.append((piece_coords, piece_path))
+            piece_info.append((piece_coords, output_path))
 
     # Print the piece coordinates and file paths
     for info in piece_info:
         print(f"Coordinates: {info[0]}")
         print(f"File path: {info[1]}")
 
-if __name__ == '__main__':
+if __name__ == '__main':
     raster_files = []
     path = 'C:/Users/LENOVO/Desktop/thesis/raster/'
     for file in os.listdir(path):
