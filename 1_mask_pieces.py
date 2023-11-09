@@ -5,10 +5,10 @@ import os
 import rasterio
 import numpy as np
 
-input_path = 'C:/Users/LENOVO/Desktop/thesis/vector/'
-output_path_no_road = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/no_road/'
-output_path_road_center = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road_center/'
-output_path_road_other = 'C:/Users/LENOVO/Desktop/thesis/vector_pieces/road_other/'
+input_path = 'C:/Users/LENOVO/Desktop/thesis/groundtruth/'
+output_path_no_road = 'C:/Users/LENOVO/Desktop/thesis/groundtruth_pieces/no_road/'
+output_path_road_center = 'C:/Users/LENOVO/Desktop/thesis/groundtruth_pieces/road_center/'
+output_path_road_other = 'C:/Users/LENOVO/Desktop/thesis/groundtruth_pieces/road_other/'
 
 for file in os.listdir(input_path):
     if file.endswith('.png'):
@@ -26,11 +26,9 @@ for file in os.listdir(input_path):
                 end_h = int((i + 1) * height / 95)
                 start_w = int(j * width / 186)
                 end_w = int((j + 1) * width / 186)
-
                 # Read the subset of the image using window
                 window = rasterio.windows.Window(start_w, start_h, end_w - start_w, end_h - start_h)
                 subset = dataset.read(window=window)
-
                 # Check if all values in the subset are equal to 0
                 if np.all(subset == 0):
                     identifier = os.path.basename(file).split(".png")[0]
