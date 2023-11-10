@@ -23,7 +23,7 @@ def split_and_save_image(input_path):
             height, width, _ = image.shape
             for i in range(95):
                 for j in range(186):
-                    # Calculate the window bounds for each piece
+                    # Calculate the window bounds for each piece #####ADICIONAR EM VARIÁVEIS E NÃO SÓ NUMERO#########
                     start_h = int(i * height / 95)
                     end_h = int((i + 1) * height / 95)
                     start_w = int(j * width / 186)
