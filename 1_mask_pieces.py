@@ -1,8 +1,7 @@
 # Description of the notebook: Vector's cut: Split each image into 32x32 pixel pieces
 
-from rasterio.windows import Window
 import os
-import rasterio
+import cv2
 import numpy as np
 
 input_path = 'C:/Users/LENOVO/Desktop/thesis/groundtruth/'
@@ -14,11 +13,10 @@ for file in os.listdir(input_path):
     if file.endswith('.png'):
         png_file = os.path.join(input_path, file)
         print(png_file)
-        dataset = rasterio.open(png_file)
-        # Read the image data
-        image = dataset.read()
+        # Read the image using OpenCV
+        image = cv2.imread(png_file)
         # Get the dimensions of the image
-        height, width = image.shape[1:]
+        height, width, _ = image.shape
         for i in range(95):
             for j in range(186):
                 # Calculate the window bounds for each piece
@@ -26,30 +24,21 @@ for file in os.listdir(input_path):
                 end_h = int((i + 1) * height / 95)
                 start_w = int(j * width / 186)
                 end_w = int((j + 1) * width / 186)
-                # Read the subset of the image using window
-                window = rasterio.windows.Window(start_w, start_h, end_w - start_w, end_h - start_h)
-                subset = dataset.read(window=window)
+                # Extract the subset of the image
+                subset = image[start_h:end_h, start_w:end_w, :]
                 # Check if all values in the subset are equal to 0
                 if np.all(subset == 0):
                     identifier = os.path.basename(file).split(".png")[0]
-                    output_path = os.path.join(output_path_no_road, f'{identifier}_{i}_{j}.tif')
+                    output_path = os.path.join(output_path_no_road, f'{identifier}_{i}_{j}.png')
                 else:
                     # Check if values are different from 0 in the center of the piece
-                    center_h = int(subset.shape[1] / 2)
-                    center_w = int(subset.shape[2] / 2)
-                    if subset[0, center_h, center_w] != 0:
+                    center_h = int(subset.shape[0] / 2)
+                    center_w = int(subset.shape[1] / 2)
+                    if subset[center_h, center_w, 0] != 0:
                         identifier = os.path.basename(file).split(".png")[0]
-                        output_path = os.path.join(output_path_road_center, f'{identifier}_{i}_{j}.tif')
+                        output_path = os.path.join(output_path_road_center, f'{identifier}_{i}_{j}.png')
                     else:
                         identifier = os.path.basename(file).split(".png")[0]
-                        output_path = os.path.join(output_path_road_other, f'{identifier}_{i}_{j}.tif')
-                with rasterio.open(
-                    output_path,
-                    'w',
-                    driver='GTiff',
-                    width=subset.shape[2],
-                    height=subset.shape[1],
-                    count=subset.shape[0],  # Set count to the number of bands in the subset
-                    dtype=subset.dtype
-                ) as dst:
-                    dst.write(subset)
+                        output_path = os.path.join(output_path_road_other, f'{identifier}_{i}_{j}.png')
+                # Save the subset as a new image
+                cv2.imwrite(output_path, subset)
