@@ -11,11 +11,16 @@ import cv2
 import numpy as np
 import random
 
-input_path = 'C:/Users/LENOVO/Desktop/thesis/02_groundtruth/'
-output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/03_balanced_groundtruth/no_road/'
-output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/03_balanced_groundtruth/road/'
-output_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/05_excess/groundtruth/no_road/'
-output_excess_road = 'C:/Users/LENOVO/Desktop/thesis/05_excess/groundtruth/road/'
+import os
+import cv2
+import numpy as np
+import random
+
+input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/mask_groundtruth/'
+output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/no_road/'
+output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/road/'
+output_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_road/'
+output_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/road/'
 
 all_zero_pieces = []
 

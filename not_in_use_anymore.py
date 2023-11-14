@@ -297,7 +297,7 @@ if __name__ == "__main__":
 ########################################################################################################################
 
 # Description of the notebook:
-# Cuting the vectors into yhr shape that is needed
+# Cuting the vectors into the shape that is needed
 from rasterio.crs import CRS
 import os
 import rasterio
