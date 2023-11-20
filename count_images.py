@@ -1,44 +1,29 @@
 import os
 
-og_vec = 'C:/Users/LENOVO/Desktop/thesis/groundtruth/'
-og_ras = 'C:/Users/LENOVO/Desktop/thesis/raster/'
-nr_vec = 'C:/Users/LENOVO/Desktop/thesis/groundtruth_pieces/no_road/'
-rc_vec = 'C:/Users/LENOVO/Desktop/thesis/groundtruth_pieces/road_center/'
-ro_vec = 'C:/Users/LENOVO/Desktop/thesis/groundtruth_pieces/road_other/'
-nr_ras = 'C:/Users/LENOVO/Desktop/thesis/raster_pieces/no_road/'
-rc_ras = 'C:/Users/LENOVO/Desktop/thesis/raster_pieces/road_center/'
-ro_ras = 'C:/Users/LENOVO/Desktop/thesis/raster_pieces/road_other/'
+input = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/mask_groundtruth/'
 
-og_vec_count = len(os.listdir(og_vec))
-og_ras_count = len(os.listdir(og_ras))
-nr_vec_count = len(os.listdir(nr_vec))
-rc_vec_count = len(os.listdir(rc_vec))
-ro_vec_count = len(os.listdir(ro_vec))
-nr_ras_count = len(os.listdir(nr_ras))
-rc_ras_count = len(os.listdir(rc_ras))
-ro_ras_count = len(os.listdir(ro_ras))
+output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/no_road/'
+output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/road/'
+output_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_road/'
+output_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/road/'
 
-print('Counts on the input data that exists at the moment:')
-#print('ORIGINALS:')
-#print(f'Number of original vector files is: {og_vec_count}')
-#print(f'Number of original raster files is: {og_ras_count}')
-print('NO ROAD:')
-print(f'Number of vector files is: {nr_vec_count}')
-print(f'Number of raster files is: {nr_ras_count}')
-print('ROAD CENTER:')
-print(f'Number of vector files is: {rc_vec_count}')
-print(f'Number of raster files is: {rc_ras_count}')
-print('ROAD OTHER:')
-print(f'Number of vector files is: {ro_vec_count}')
-print(f'Number of raster files is: {ro_ras_count}')
+input_count = len(os.listdir(input))
+balanced_no_road_count = len(os.listdir(output_balanced_no_road))
+balanced_road_count = len(os.listdir(output_balanced_road))
+excess_no_road_count = len(os.listdir(output_excess_no_road))
+excess_road_count = len(os.listdir(output_excess_road))
 
-#images = len(os.listdir(og_vec))
-#width = 186
-#height = 95
+print(f'Number of files in balanced no road: {balanced_no_road_count}')
+print(f'Number of files in balanced road: {balanced_road_count}')
+print(f'Number of files in excess no road: {excess_no_road_count}')
+print(f'Number of files in excess road: {excess_road_count}')
 
-nr = nr_vec_count
-rc = rc_vec_count
-ro = ro_vec_count
+images = len(os.listdir(input))
+width = 186
+height = 95
+total_expected = images*width*height
 
-#print(f'Number of pieces that is expected: {int(images*width*height)}')
-print(f'Number of pieces that exists: {int(nr+rc+ro)}')
+print(f'Number of pieces expected: {int(total_expected)}')
+
+total_real = balanced_no_road_count + balanced_road_count + excess_no_road_count + excess_road_count
+print(f'Number of pieces existing: {int(total_real)}')

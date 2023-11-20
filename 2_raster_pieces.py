@@ -18,7 +18,7 @@ def split_and_save_image(input_path):
             image = cv2.imread(tif_file)
             # Get the dimensions of the image
             height, width, _ = image.shape
-            height_pieces = int(height // 32)
+            height_pieces = int(height // 32) # Establish the
             width_pieces = int(width // 32)
             for i in range(height_pieces):
                 for j in range(width_pieces):
@@ -50,5 +50,5 @@ def split_and_save_image(input_path):
     print('Finished successfully')
 
 if __name__ == '__main__':
-    input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/raster/'
+    input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/raster'
     split_and_save_image(input_path)

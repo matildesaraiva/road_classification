@@ -1,5 +1,6 @@
 # Description of the notebook:
-# Raster's first cut: The goal of this notebook is to cut the images into a multiple number of 32, establishing a 5952x3072 pixels shape, starting in (0,0)
+# Raster's first cut: The goal of this notebook is to cut the images into a multiple number of 32, establishing a
+# 5952x3072 pixels shape, starting in (0,0)
 
 from rasterio.crs import CRS
 import os
