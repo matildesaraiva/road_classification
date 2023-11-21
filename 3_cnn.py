@@ -61,10 +61,10 @@ val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
 
 # Build the model for binary classification with Batch Normalization and Dropout
 model = tf.keras.models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3)),
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3), padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
-    layers.Conv2D(64, (3, 3), activation='relu'),
+    layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
