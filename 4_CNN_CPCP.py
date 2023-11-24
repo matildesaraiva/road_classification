@@ -1,12 +1,11 @@
+import os
 import tensorflow as tf
-from tensorflow import keras
 from tensorflow.keras import layers
-from keras.applications import MobileNet
-from sklearn.metrics import ConfusionMatrixDisplay, confusion_matrix
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from sklearn.metrics import confusion_matrix
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-import os
 
 # Disable unnecessary logging
 tf.get_logger().setLevel('ERROR')
@@ -15,7 +14,7 @@ os.environ["TF_CPP_MIN_LOG_LEVEL"] = "4"
 batch_size = 32
 img_height = 32
 img_width = 32
-dataset_path = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/'
+dataset_path = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/no_border/'
 
 # Load the dataset with class names
 train_ds = tf.keras.utils.image_dataset_from_directory(
@@ -44,15 +43,15 @@ val_ds = tf.keras.utils.image_dataset_from_directory(
 )
 
 # Display some example images
-plt.figure(1, figsize=(10, 10))
-for x_batch, y_batch in train_ds.take(1):
-    batch_size = len(x_batch)
-    for i in range(min(16, batch_size)):
-        ax = plt.subplot(4, 4, i + 1)
-        plt.imshow(x_batch[i].numpy().astype("uint8"))
-        plt.title(class_names[np.argmax(y_batch[i, :])])
-        plt.axis("off")
-plt.show()
+#plt.figure(1, figsize=(10, 10))
+#for x_batch, y_batch in train_ds.take(1):
+#    batch_size = len(x_batch)
+#    for i in range(min(16, batch_size)):
+#        ax = plt.subplot(4, 4, i + 1)
+#        plt.imshow(x_batch[i].numpy().astype("uint8"))
+#        plt.title(class_names[np.argmax(y_batch[i, :])])
+#        plt.axis("off")
+#plt.show()
 
 # Memory optimizations
 train_ds = train_ds.cache()
@@ -61,52 +60,56 @@ AUTOTUNE = tf.data.AUTOTUNE
 train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)
 val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
 
-# Import MobileNet and make it non-trainable
-MobileNetmodel = MobileNet(input_shape=(None, None, 3), include_top=False)
-MobileNetmodel.summary()
-MobileNetmodel.trainable = False
-
-# Build the model for binary classification (mudar p v3 0-255) - pode-se fazer o rescale no teste baseline p ver se se treina bem)
+# Build the model for binary classification with Batch Normalization and Dropout
 model = tf.keras.models.Sequential([
-    #layers.Rescaling(1./127, offset=-1, input_shape=(img_height, img_width, 3)),
-    MobileNetmodel,
+    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3), padding='same'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D((2, 2)),
+    layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
+    layers.BatchNormalization(),
+    layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
     layers.Dense(256, activation='relu'),
-    layers.Dropout(0.2),
+    layers.BatchNormalization(),
+    layers.Dropout(0.5),  # Adjust the dropout rate
     layers.Dense(1, activation="sigmoid")
 ])
 
-model.compile(optimizer='adam',
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),  # Adjust the learning rate
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
-model.summary()
+# Callback for early stopping
+early_stopping_callback = EarlyStopping(
+    monitor='val_loss',
+    patience=10,
+    restore_best_weights=True)
 
-max_epochs = 1
-
-# Callbacks for model checkpoint and early stopping
-model_checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(
-    filepath="C:/LENOVO/Desktop/thesis/best_model.h5",
+# Callback to save the model weights
+model_checkpoint_callback = ModelCheckpoint(
+    filepath='best_weights_CPCP.h5',
+    save_best_only=True,
     save_weights_only=True,
     monitor='val_accuracy',
     mode='max',
-    save_best_only=True)
+    verbose=1)
 
-early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss',
-    patience=3)
+# Check if a weights file exists
+if os.path.exists('best_weights_CPCP.h5'):
+    model.load_weights('best_weights_CPCP.h5')
+    print("Loaded weights from existing file.")
+
+model.summary()
+
+max_epochs = 100
 
 history = model.fit(
     train_ds,
     epochs=max_epochs,
     validation_data=val_ds,
-    callbacks=[model_checkpoint_callback, early_stopping_callback])
+    callbacks=[early_stopping_callback, model_checkpoint_callback])
 
 # Evaluate the model on the validation set
-# Já não faz sentido (true - pred -- dimensões das matrizes)
-# ter um conj. teste qd tiver mais dados - softmax - desvantagens no tempo de treino (2x)
-#ver os vectores (0-1), se não: voltar atrás resolver os problemas no binário)
-
 y_pred = model.predict(val_ds)
 y_pred = tf.argmax(y_pred, axis=1)
 
@@ -117,8 +120,6 @@ num_misses = np.count_nonzero(y_true - y_pred)
 num_predictions = len(y_true)
 accuracy = 100.0 - num_misses * 100.0 / num_predictions
 print("Val accuracy = %.02f %%" % accuracy)
-
-#
 
 # Save misclassified images into a folder
 misclassified_folder = 'C:/Users/LENOVO/Desktop/thesis/data/'
@@ -135,7 +136,6 @@ for i in range(len(y_true)):
 
 # Plot training history and confusion matrix
 cm = confusion_matrix(y_true, y_pred)
-# fazer antes para multiclasse (categorical)
 
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
@@ -153,9 +153,5 @@ plt.subplot(1, 2, 2)
 plt.plot(epochs_range, loss, label='Training Loss')
 plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
-plt.title('Training and Validation Loss')
 
-# Confusion Matrix
-#disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=class_names)
-#disp.plot(cmap=plt.cm.Blues, values_format='d')
-#plt.show()
+plt.show()

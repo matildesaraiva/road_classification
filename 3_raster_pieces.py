@@ -4,10 +4,10 @@
 import cv2
 import os
 
-groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/no_road/'
-groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/road/'
-groundtruth_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_road/'
-groundtruth_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/road/'
+groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/no_border/no_road/'
+groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth//no_border/road/'
+groundtruth_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_border/no_road/'
+groundtruth_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_border/road/'
 
 def split_and_save_image(input_path):
     for file in os.listdir(input_path):
@@ -34,13 +34,13 @@ def split_and_save_image(input_path):
                     piece_name = f"{identifier}_{i}_{j}.png"
                     # Condition for the attribution of file to each folder
                     if os.path.exists(os.path.join(groundtruth_balanced_no_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/no_road/{piece_name}'
+                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/no_border/no_road/{piece_name}'
                     elif os.path.exists(os.path.join(groundtruth_balanced_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/road/{piece_name}'
-                    elif os.path.exists(os.path.join(groundtruth_excess_no_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/no_road/{piece_name}'
-                    elif os.path.exists(os.path.join(groundtruth_excess_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/road/{piece_name}'
+                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/no_border/road/{piece_name}'
+                    #elif os.path.exists(os.path.join(groundtruth_excess_no_road, piece_name)):
+                        #output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/no_border/no_road/{piece_name}'
+                    #elif os.path.exists(os.path.join(groundtruth_excess_road, piece_name)):
+                        #output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/no_border/road/{piece_name}'
                     else:
                         output_path = None
                     if output_path:
@@ -50,5 +50,5 @@ def split_and_save_image(input_path):
     print('Finished successfully')
 
 if __name__ == '__main__':
-    input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/raster'
+    input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/raster/no_border/'
     split_and_save_image(input_path)
