@@ -2,7 +2,8 @@ import os
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.metrics import confusion_matrix
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import confusion_matrix, precision_score, recall_score
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
@@ -93,41 +94,63 @@ if os.path.exists('best_weights_CPCPCP.h5'):
 
 model.summary()
 
-max_epochs = 100
+# Data Augmentation (Horizontal Flip Only)
+datagen = ImageDataGenerator(
+    horizontal_flip=True
+)
 
+# Convert train_ds to a NumPy array
+train_images = []
+train_labels = []
+
+for images, labels in train_ds:
+    train_images.append(images.numpy())
+    train_labels.append(labels.numpy())
+
+train_images = np.concatenate(train_images)
+train_labels = np.concatenate(train_labels)
+
+# Fit the model with data augmentation
+max_epochs = 100
 history = model.fit(
-    train_ds,
+    datagen.flow(train_images, train_labels, batch_size=batch_size),
     epochs=max_epochs,
     validation_data=val_ds,
-    callbacks=[early_stopping_callback, model_checkpoint_callback])
+    callbacks=[early_stopping_callback, model_checkpoint_callback]
+)
 
 # Save the final weights
 model.save_weights('final_weights_CPCPCP.h5')
 
 # Evaluate the model on the validation set
-y_pred = model.predict(val_ds)
-y_pred = tf.argmax(y_pred, axis=1)
+y_pred_probs = model.predict(val_ds)
+y_pred = np.round(y_pred_probs).flatten()
 
-y_true = tf.concat([y for x, y in val_ds], axis=0)
-y_true = tf.argmax(y_true, axis=1)
+y_true = tf.concat([y for x, y in val_ds], axis=0).numpy()
 
-num_misses = np.count_nonzero(y_true - y_pred)
-num_predictions = len(y_true)
-accuracy = 100.0 - num_misses * 100.0 / num_predictions
-print("Val accuracy = %.02f %%" % accuracy)
+# Calculate precision and recall
+precision = precision_score(y_true, y_pred)
+recall = recall_score(y_true, y_pred)
+
+print("Precision: {:.4f}".format(precision))
+print("Recall: {:.4f}".format(recall))
 
 # Save misclassified images into a folder
-misclassified_folder = 'C:/Users/LENOVO/Desktop/thesis/data/'
+misclassified_folder = 'C:/Users/LENOVO/Desktop/thesis/data/misclassified/'
 os.makedirs(misclassified_folder, exist_ok=True)
 
-for i in range(len(y_true)):
-    if y_true[i] != y_pred[i]:
-        misclassified_image = x_batch[i].numpy().astype("uint8")
-        misclassified_label = class_names[y_true[i].numpy()]
-        misclassified_pred = class_names[y_pred[i].numpy()]
-        misclassified_filename = f"misclassified_{i}_true_{misclassified_label}_pred_{misclassified_pred}.png"
-        misclassified_path = os.path.join(misclassified_folder, misclassified_filename)
-        cv2.imwrite(misclassified_path, misclassified_image)
+for (x_batch, y_true_batch) in val_ds:
+    y_pred_batch = model.predict(x_batch)
+    y_pred_batch = np.round(y_pred_batch).flatten()
+
+    for i in range(len(y_true_batch)):
+        if y_true_batch[i].numpy() != y_pred_batch[i]:
+            misclassified_image = x_batch[i].numpy().astype("uint8")
+            misclassified_label = class_names[int(y_true_batch[i].numpy())]
+            misclassified_pred = class_names[int(y_pred_batch[i])]
+            misclassified_filename = f"misclassified_{i}_true_{misclassified_label}_pred_{misclassified_pred}.png"
+            misclassified_path = os.path.join(misclassified_folder, misclassified_filename)
+            cv2.imwrite(misclassified_path, misclassified_image)
 
 # Plot training history and confusion matrix
 cm = confusion_matrix(y_true, y_pred)
@@ -150,3 +173,4 @@ plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 
 plt.show()
+
