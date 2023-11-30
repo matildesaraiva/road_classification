@@ -94,9 +94,11 @@ if os.path.exists('best_weights_CPCPCP.h5'):
 
 model.summary()
 
-# Data Augmentation (Horizontal Flip Only)
+# Data Augmentation
 datagen = ImageDataGenerator(
-    horizontal_flip=True
+    rotation_range=90,
+    horizontal_flip=True,
+    vertical_flip=True
 )
 
 # Convert train_ds to a NumPy array
@@ -173,4 +175,3 @@ plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 
 plt.show()
-
