@@ -51,7 +51,7 @@ for file in os.listdir(input_path):
 
                     if portion >= 0.2:
                         identifier = os.path.basename(png_file).split(".png")[0]
-                        piece_name = f"{identifier}_{i}_{j}.png")
+                        piece_name = f"{identifier}_{i}_{j}.png"
                         road_dataset_pieces.append((piece_name, subset))
                     else:
                         identifier = os.path.basename(png_file).split(".png")[0]
@@ -78,19 +78,19 @@ print(len(zero_excess_pieces))
 # Save zero_dataset_pieces in dataset/groundtruth/no road
 for piece_name, subset in zero_dataset_pieces:
     output_path = os.path.join(output_balanced_no_road, piece_name)
-cv2.imwrite(output_path, subset)
+    cv2.imwrite(output_path, subset)
 
 # Save road_dataset_pieces in dataset/groundtruth/road
 for piece_name, subset in road_dataset_pieces:
     output_path = os.path.join(output_balanced_road, piece_name)
-cv2.imwrite(output_path, subset)
+    cv2.imwrite(output_path, subset)
 
 # Save zero_excess_pieces in excess/groundtruth/no road
-for piece_name, subset in zero_excess_pieces:
-    output_path = os.path.join(output_excess_no_road, piece_name)
-cv2.imwrite(output_path, subset)
+#for piece_name, subset in zero_excess_pieces:
+#    output_path = os.path.join(output_excess_no_road, piece_name)
+#    cv2.imwrite(output_path, subset)
 
 # Save road_excess_pieces in excess/groundtruth/road
-for piece_name, subset in road_excess_pieces:
-    output_path = os.path.join(output_excess_road, piece_name)
-cv2.imwrite(output_path, subset)
+#for piece_name, subset in road_excess_pieces:
+#    output_path = os.path.join(output_excess_road, piece_name)
+#    cv2.imwrite(output_path, subset)

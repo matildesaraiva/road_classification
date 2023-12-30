@@ -6,8 +6,8 @@ import os
 
 groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/no_border/no_road/'
 groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth//no_border/road/'
-groundtruth_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_border/no_road/'
-groundtruth_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_border/road/'
+#groundtruth_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_border/no_road/'
+#groundtruth_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/no_border/road/'
 
 def split_and_save_image(input_path):
     for file in os.listdir(input_path):

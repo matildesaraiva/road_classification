@@ -86,11 +86,11 @@ for piece_name, subset in road_dataset_pieces:
     cv2.imwrite(output_path, subset)
 
 # Save zero_excess_pieces in excess/groundtruth/no road
-for piece_name, subset in zero_excess_pieces:
-    output_path = os.path.join(output_excess_no_road, piece_name)
-    cv2.imwrite(output_path, subset)
+#for piece_name, subset in zero_excess_pieces:
+#    output_path = os.path.join(output_excess_no_road, piece_name)
+#    cv2.imwrite(output_path, subset)
 
 # Save road_excess_pieces in excess/groundtruth/road
-for piece_name, subset in road_excess_pieces:
-    output_path = os.path.join(output_excess_road, piece_name)
-    cv2.imwrite(output_path, subset)
+#for piece_name, subset in road_excess_pieces:
+#    output_path = os.path.join(output_excess_road, piece_name)
+#    cv2.imwrite(output_path, subset)

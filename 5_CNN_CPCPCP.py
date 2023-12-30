@@ -1,3 +1,4 @@
+import time
 import os
 import tensorflow as tf
 from tensorflow.keras import layers
@@ -7,6 +8,17 @@ from sklearn.metrics import confusion_matrix, precision_score, recall_score
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+
+def start_timer():
+    return time.time()
+
+def end_timer(start_time):
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    return elapsed_time
+
+# start counting the time
+start_time = start_timer()
 
 # Disable unnecessary logging
 tf.get_logger().setLevel('ERROR')
@@ -55,20 +67,23 @@ model = tf.keras.models.Sequential([
     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3), padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
+    layers.Dropout(0.25),
     layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
+    layers.Dropout(0.25),
     layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
     layers.Dense(256, activation='relu'),
     layers.BatchNormalization(),
-    layers.Dropout(0.5),
+    layers.Dropout(0.25),
     layers.Dense(1, activation="sigmoid")
 ])
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
+#ajustar o learning rate para um maior (0.001)
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
@@ -138,7 +153,7 @@ print("Precision: {:.4f}".format(precision))
 print("Recall: {:.4f}".format(recall))
 
 # Save misclassified images into a folder
-misclassified_folder = 'C:/Users/LENOVO/Desktop/thesis/data/misclassified/'
+misclassified_folder = 'C:/Users/LENOVO/Desktop/thesis/data/cpcpcp_misclassified/'
 os.makedirs(misclassified_folder, exist_ok=True)
 
 for (x_batch, y_true_batch) in val_ds:
@@ -175,3 +190,6 @@ plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 
 plt.show()
+
+elapsed_time = end_timer(start_time)
+print(f"Elapsed time: {elapsed_time} seconds")

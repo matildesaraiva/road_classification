@@ -1,11 +1,23 @@
+import time
 import os
 import tensorflow as tf
 from tensorflow.keras import layers
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from sklearn.metrics import confusion_matrix
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from sklearn.metrics import confusion_matrix, precision_score, recall_score
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+
+def start_timer():
+    return time.time()
+
+def end_timer(start_time):
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    return elapsed_time
+
+start_time = start_timer()
 
 # Disable unnecessary logging
 tf.get_logger().setLevel('ERROR')
@@ -65,17 +77,18 @@ model = tf.keras.models.Sequential([
     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3), padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
+    layers.Dropout(0.25),
     layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
     layers.Dense(256, activation='relu'),
     layers.BatchNormalization(),
-    layers.Dropout(0.5),  # Adjust the dropout rate
+    layers.Dropout(0.25),
     layers.Dense(1, activation="sigmoid")
 ])
 
-model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),  # Adjust the learning rate
+model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
               loss='binary_crossentropy',
               metrics=['accuracy'])
 
@@ -101,25 +114,46 @@ if os.path.exists('best_weights_CPCP.h5'):
 
 model.summary()
 
-max_epochs = 100
+# Data Augmentation
+datagen = ImageDataGenerator(
+    rotation_range=90,
+    horizontal_flip=True,
+    vertical_flip=True
+)
 
+# Convert train_ds to a NumPy array
+train_images = []
+train_labels = []
+
+for images, labels in train_ds:
+    train_images.append(images.numpy())
+    train_labels.append(labels.numpy())
+
+train_images = np.concatenate(train_images)
+train_labels = np.concatenate(train_labels)
+
+max_epochs = 100
 history = model.fit(
     train_ds,
     epochs=max_epochs,
     validation_data=val_ds,
     callbacks=[early_stopping_callback, model_checkpoint_callback])
 
+# Save the final weights
+model.save_weights('final_weights_CPCP.h5')
+
 # Evaluate the model on the validation set
-y_pred = model.predict(val_ds)
-y_pred = tf.argmax(y_pred, axis=1)
+y_pred_probs = model.predict(val_ds)
+y_pred = np.round(y_pred_probs).flatten()
 
-y_true = tf.concat([y for x, y in val_ds], axis=0)
-y_true = tf.argmax(y_true, axis=1)
+y_true = tf.concat([y for x, y in val_ds], axis=0).numpy()
 
-num_misses = np.count_nonzero(y_true - y_pred)
-num_predictions = len(y_true)
-accuracy = 100.0 - num_misses * 100.0 / num_predictions
-print("Val accuracy = %.02f %%" % accuracy)
+# Calculate precision and recall
+precision = precision_score(y_true, y_pred)
+recall = recall_score(y_true, y_pred)
+
+print("Precision: {:.4f}".format(precision))
+print("Recall: {:.4f}".format(recall))
 
 # Save misclassified images into a folder
 misclassified_folder = 'C:/Users/LENOVO/Desktop/thesis/data/'
@@ -155,3 +189,6 @@ plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 
 plt.show()
+
+elapsed_time = end_timer(start_time)
+print(f"Elapsed time: {elapsed_time} seconds")

@@ -6,8 +6,8 @@ import os
 
 groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth/border/no_road/'
 groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/groundtruth//border/road/'
-groundtruth_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/border/no_road/'
-groundtruth_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/border/road/'
+#groundtruth_excess_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/border/no_road/'
+#groundtruth_excess_road = 'C:/Users/LENOVO/Desktop/thesis/data/3_excess/groundtruth/border/road/'
 
 def split_and_save_image(input_path):
     for file in os.listdir(input_path):
@@ -37,10 +37,10 @@ def split_and_save_image(input_path):
                         output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/border/no_road/{piece_name}'
                     elif os.path.exists(os.path.join(groundtruth_balanced_road, piece_name)):
                         output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_dataset/raster/border/road/{piece_name}'
-                    elif os.path.exists(os.path.join(groundtruth_excess_no_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/border/no_road/{piece_name}'
-                    elif os.path.exists(os.path.join(groundtruth_excess_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/border/road/{piece_name}'
+                    #elif os.path.exists(os.path.join(groundtruth_excess_no_road, piece_name)):
+                    #    output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/border/no_road/{piece_name}'
+                    #elif os.path.exists(os.path.join(groundtruth_excess_road, piece_name)):
+                    #    output_path = f'C:/Users/LENOVO/Desktop/thesis/data/3_excess/raster/border/road/{piece_name}'
                     else:
                         output_path = None
                     if output_path:
