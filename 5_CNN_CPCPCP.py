@@ -95,7 +95,7 @@ early_stopping_callback = EarlyStopping(
 
 # Callback to save the model weights
 model_checkpoint_callback = ModelCheckpoint(
-    filepath='best_weights_CPCPCP.h5',
+    filepath='../../../best_weights_CPCPCP.h5',
     save_best_only=True,
     save_weights_only=True,
     monitor='val_accuracy',
@@ -103,7 +103,7 @@ model_checkpoint_callback = ModelCheckpoint(
     verbose=1)
 
 # Check if a weights file exists
-if os.path.exists('best_weights_CPCPCP.h5'):
+if os.path.exists('../../../best_weights_CPCPCP.h5'):
     model.load_weights('best_weights_CPCPCP.h5')
     print("Loaded weights from an existing file.")
 
