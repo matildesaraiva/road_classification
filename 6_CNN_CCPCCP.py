@@ -64,7 +64,7 @@ val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
 
 # Build the model for binary classification with Batch Normalization and Dropout
 model = tf.keras.models.Sequential([
-    layers.Conv2D(32, (3, 3), activation='relu', input_shape=(img_height, img_width, 3), padding='same'),
+    layers.Conv2D(64, (3, 3), activation='relu', input_shape=(img_height, img_width, 3), padding='same'),
     layers.BatchNormalization(),
     layers.Conv2D(64, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
@@ -72,14 +72,14 @@ model = tf.keras.models.Sequential([
     layers.Dropout(0.25),
     layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
-    layers.Conv2D(256, (3, 3), activation='relu', padding='same'),
+    layers.Conv2D(128, (3, 3), activation='relu', padding='same'),
     layers.BatchNormalization(),
     layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
     layers.Dense(256, activation='relu'),
     layers.BatchNormalization(),
-    layers.Dropout(0.25),
-    layers.Dense(1, activation="sigmoid")
+    layers.Dropout(0.25), #duas densas iguais 256 relu ou então pôr mais neurónios na densa
+    layers.Dense(1, activation="sigmoid") #Softmax
 ])
 
 model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),

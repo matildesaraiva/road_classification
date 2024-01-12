@@ -12,8 +12,8 @@ import numpy as np
 import random
 
 input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/binary/no_border'
-output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/medium_dataset/groundtruth/no_border/no_road/'
-output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/medium_dataset/groundtruth//no_border/road/'
+output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/medium_center/groundtruth/no_border/no_road/'
+output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/medium_center/groundtruth/no_border/road/'
 
 all_zero_pieces = []
 road_dataset_pieces = []
@@ -39,7 +39,7 @@ for file in os.listdir(input_path):
                 start_w = j * piece_size
                 end_w = (j + 1) * piece_size
 
-                # Ensure the subset has 96x96 pixels in height and width
+                # Ensure the subset has 64x64 pixels in height and width
                 subset = image[start_h:end_h, start_w:end_w, :]
 
                 if subset.shape[0] == piece_size and subset.shape[1] == piece_size:
@@ -47,12 +47,13 @@ for file in os.listdir(input_path):
                         identifier = os.path.basename(png_file).split(".png")[0]
                         piece_name = f"{identifier}_{i}_{j}.png"
                         all_zero_pieces.append((piece_name, subset))
-                    else:
-                        non_zero = np.count_nonzero(subset)
-                        total = subset.size
-                        portion = non_zero / total
 
-                        if portion >= 0.2:
+                    else:
+                        # Create an imaginary 4x4 subset within the 64x64 subset
+                        imaginary_subset = subset[:4, :4, :]
+
+                        # Check if the imaginary subset has at least one pixel equal to 1
+                        if np.any(imaginary_subset == 1):
                             identifier = os.path.basename(png_file).split(".png")[0]
                             piece_name = f"{identifier}_{i}_{j}.png"
                             road_dataset_pieces.append((piece_name, subset))
