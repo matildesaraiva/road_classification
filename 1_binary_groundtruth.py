@@ -5,8 +5,8 @@ import cv2
 import os
 from PIL import Image
 
-input_folder_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/original/no_border'
-output_folder_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/binary/no_border'
+input_folder_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/original/border'
+output_folder_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/binary/border'
 
 for filename in os.listdir(input_folder_path):
     if filename.endswith('.png'):

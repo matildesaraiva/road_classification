@@ -12,8 +12,8 @@ import numpy as np
 import random
 
 input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/binary/no_border'
-output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_big_dataset/groundtruth/no_border/no_road/'
-output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_big_dataset/groundtruth//no_border/road/'
+output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium/groundtruth/no_border/no_road/'
+output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium/groundtruth/no_border/road/'
 
 all_zero_pieces = []
 road_dataset_pieces = []
@@ -25,7 +25,7 @@ for file in os.listdir(input_path):
         image = cv2.imread(png_file)
 
         height, width, _ = image.shape
-        piece_size = 96
+        piece_size = 64
 
         # Calculate the number of pieces in each dimension
         height_pieces = height // piece_size
