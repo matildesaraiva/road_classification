@@ -12,8 +12,8 @@ import numpy as np
 import random
 
 input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/binary/no_border'
-output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium/groundtruth/no_border/no_road/'
-output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium/groundtruth/no_border/road/'
+output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/no_road/'
+output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/road/'
 
 all_zero_pieces = []
 road_dataset_pieces = []
@@ -52,7 +52,7 @@ for file in os.listdir(input_path):
                         total = subset.size
                         portion = non_zero / total
 
-                        if portion >= 0.2:
+                        if portion >= 0.1:
                             identifier = os.path.basename(png_file).split(".png")[0]
                             piece_name = f"{identifier}_{i}_{j}.png"
                             road_dataset_pieces.append((piece_name, subset))

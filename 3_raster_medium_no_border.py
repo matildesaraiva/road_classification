@@ -4,8 +4,8 @@
 import cv2
 import os
 
-groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_big_dataset/groundtruth/no_border/no_road/'
-groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_big_dataset/groundtruth/no_border/road/'
+groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/no_road/'
+groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/road/'
 
 def split_and_save_image(input_path):
     for file in os.listdir(input_path):
@@ -16,7 +16,7 @@ def split_and_save_image(input_path):
             image = cv2.imread(tif_file)
 
             height, width, _ = image.shape
-            piece_size = 96
+            piece_size = 64
 
             # Calculate the number of pieces in each dimension
             height_pieces = height // piece_size
@@ -38,9 +38,9 @@ def split_and_save_image(input_path):
                     piece_name = f"{identifier}_{i}_{j}.png"
                     # Condition for the attribution of file to each folder
                     if os.path.exists(os.path.join(groundtruth_balanced_no_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_big_dataset/raster/no_border/no_road/{piece_name}'
+                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/raster/no_road/{piece_name}'
                     elif os.path.exists(os.path.join(groundtruth_balanced_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_big_dataset/raster/no_border/road/{piece_name}'
+                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/raster/road/{piece_name}'
                     else:
                         output_path = None
                     if output_path:
