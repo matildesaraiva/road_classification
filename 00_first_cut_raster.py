@@ -28,7 +28,7 @@ def raster_extraction(index, tif_file):
         (bottomright_coo[1] - topleft_coo[1]) / target_height
     )
     # Create a new directory to save the modified images
-    output_dir = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/raster/border/'
+    output_dir = 'C:/remote_sensing/data/1_data/raster/border/'
     os.makedirs(output_dir, exist_ok=True)
     print(f"Output Directory: {output_dir}")  # Debugging statement
     # Read the subset of the image (first 3072x5952 pixels)
@@ -52,7 +52,7 @@ def raster_extraction(index, tif_file):
 if __name__ == '__main__':
     piece_info = []  # Initialize piece_info list
     raster_files = []
-    path = 'C:/Users/LENOVO/Desktop/thesis/data/0_original/border'
+    path = 'C:/remote_sensing/data/0_original/border'
     for file in os.listdir(path):
         if file.endswith('.tif'):
             tif_file = os.path.join(path, file)

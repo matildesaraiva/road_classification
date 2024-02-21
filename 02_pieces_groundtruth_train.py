@@ -11,9 +11,9 @@ import cv2
 import numpy as np
 import random
 
-input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/groundtruth/binary/no_border'
-output_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/no_road/'
-output_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/road/'
+input_path = 'C:/remote_sensing/data/1_data/groundtruth/binary/no_border'
+output_balanced_no_road = 'C:/remote_sensing/data/2_datasets/medium_10/groundtruth/no_road/'
+output_balanced_road = 'C:/remote_sensing/data/2_datasets/medium_10/groundtruth/road/'
 
 all_zero_pieces = []
 road_dataset_pieces = []

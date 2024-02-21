@@ -4,8 +4,8 @@
 import cv2
 import os
 
-groundtruth_balanced_no_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/no_road/'
-groundtruth_balanced_road = 'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/groundtruth/road/'
+groundtruth_balanced_no_road = 'C:/remote_sensing/data/2_datasets/medium_10/groundtruth/no_road/'
+groundtruth_balanced_road = 'C:/remote_sensing/data/2_datasets/medium_10/groundtruth/road/'
 
 def split_and_save_image(input_path):
     for file in os.listdir(input_path):
@@ -38,9 +38,9 @@ def split_and_save_image(input_path):
                     piece_name = f"{identifier}_{i}_{j}.png"
                     # Condition for the attribution of file to each folder
                     if os.path.exists(os.path.join(groundtruth_balanced_no_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/raster/no_road/{piece_name}'
+                        output_path = f'C:/remote_sensing/data/2_datasets/medium_10/raster/no_road/{piece_name}'
                     elif os.path.exists(os.path.join(groundtruth_balanced_road, piece_name)):
-                        output_path = f'C:/Users/LENOVO/Desktop/thesis/data/2_datasets/medium_10/raster/road/{piece_name}'
+                        output_path = f'C:/remote_sensing/data/2_datasets/medium_10/raster/road/{piece_name}'
                     else:
                         output_path = None
                     if output_path:
@@ -50,5 +50,5 @@ def split_and_save_image(input_path):
     print('Finished successfully')
 
 if __name__ == '__main__':
-    input_path = 'C:/Users/LENOVO/Desktop/thesis/data/1_data/raster/no_border/'
+    input_path = 'C:/remote_sensing/data/1_data/raster/no_border/'
     split_and_save_image(input_path)
