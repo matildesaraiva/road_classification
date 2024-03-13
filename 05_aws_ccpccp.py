@@ -99,7 +99,7 @@ model = tf.keras.models.Sequential([
     layers.Dense(256, activation='relu'),
     layers.BatchNormalization(),
     layers.Dropout(0.25),
-    layers.Dense(128, activation='relu'),
+    layers.Dense(256, activation='relu'),
     layers.BatchNormalization(),
     layers.Dropout(0.25),
     layers.Dense(1, activation="sigmoid")
